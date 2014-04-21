@@ -87,6 +87,11 @@ public class ArtifactIdOptionProvider extends AbstractOptionProvider {
         }
         Collections.sort(artifactIds);
 
+        // optionally include a blank value
+        if (Boolean.parseBoolean(form.getFirstValue("optional", null))) {
+            artifactIds.add(0, "");
+        }
+
         return artifactIds;
     }
 

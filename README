@@ -17,6 +17,7 @@ The plugin provides the following new HTTP resources :
   - l : limit - max number of results to return
   - includeLatest : if "true", will include the special "LATEST" version before all versions
   - includeRelease : if "true", will include the special "RELEASE" version before all versions
+  - optional : if "true", will include an empty option before all versions
 - http://NEXUS_HOST/service/local/rundeck/options/artifactId : return a json array with the artifactId of the matching artifacts.
   Parameters (all optional) :
   - r : repository ID to search in (null for searching in all indexed repositories)
@@ -24,6 +25,7 @@ The plugin provides the following new HTTP resources :
   - v : version of the artifacts to match
   - p : packaging of the artifacts to match ('jar', 'war', etc)
   - c : classifier of the artifacts to match ('sources', 'javadoc', etc)
+  - optional : if "true", will include an empty option before all artifacts
 Note that if you want to retrieve the artifact from your RunDeck script, you should use Nexus REST API : https://docs.sonatype.com/display/SPRTNXOSS/Nexus+FAQ#NexusFAQ-Q.HowcanIretrieveasnapshotifIdon%27tknowtheexactfilename%3F 
 
 Change Log
