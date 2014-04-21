@@ -120,6 +120,11 @@ public class VersionOptionProvider extends AbstractOptionProvider {
             versions = new ArrayList<Option>(versions.subList(0, limit));
         }
 
+        // optionally include a blank value
+        if (Boolean.parseBoolean(form.getFirstValue("optional", null))) {
+            versions.add(0, new Option("", ""));
+        }
+
         return versions;
     }
 
