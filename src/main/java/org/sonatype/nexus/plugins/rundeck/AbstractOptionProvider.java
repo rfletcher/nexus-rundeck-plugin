@@ -22,7 +22,6 @@ import java.util.List;
 import com.thoughtworks.xstream.XStream;
 import org.restlet.data.MediaType;
 import org.restlet.resource.Variant;
-import org.sonatype.nexus.plugins.rundeck.model.Option;
 import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
 
@@ -49,13 +48,6 @@ public abstract class AbstractOptionProvider extends AbstractPlexusResource {
     @Override
     public Object getPayloadInstance() {
         return null;
-    }
-
-    @Override
-    public void configureXStream(XStream xstream) {
-        super.configureXStream(xstream);
-
-        xstream.processAnnotations(Option.class);
     }
 
 }

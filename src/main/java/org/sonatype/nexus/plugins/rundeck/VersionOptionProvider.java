@@ -38,7 +38,6 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 import org.sonatype.nexus.index.Searcher;
-import org.sonatype.nexus.plugins.rundeck.model.Option;
 import org.sonatype.nexus.proxy.NoSuchRepositoryException;
 import org.sonatype.nexus.proxy.maven.metadata.operations.VersionComparator;
 import org.sonatype.plexus.rest.resource.PlexusResource;
@@ -84,29 +83,21 @@ public class VersionOptionProvider extends AbstractOptionProvider {
         }
 
         // retrieve unique versions and sort them from newest to oldest
-        List<Option> versions = new ArrayList<Option>();
+        List<String> versions = new ArrayList<String>();
         for (ArtifactInfo aInfo : searchResponse.getResults()) {
-            if (!optionsContainsValue(versions, aInfo.version)) {
-                versions.add(new Option(buildOptionName(aInfo), aInfo.version));
+            if (!versions.contains(aInfo.version)) {
+                versions.add(aInfo.version);
             }
         }
         final VersionComparator versionComparator = new VersionComparator();
-        Collections.sort(versions, new Comparator<Option>() {
-
-            public int compare(Option o1, Option o2) {
-                if (o1 == null || o1.getValue() == null || o2 == null || o2.getValue() == null) {
-                    throw new IllegalArgumentException();
-                }
-                return -1*versionComparator.compare(o1.getValue(), o2.getValue());
-            }
-        });
+        Collections.sort(versions);
 
         // optionally add "special" versions
         if (Boolean.parseBoolean(form.getFirstValue("includeLatest", null))) {
-            versions.add(0, new Option("LATEST", "LATEST"));
+            versions.add(0, "LATEST");
         }
         if (Boolean.parseBoolean(form.getFirstValue("includeRelease", null))) {
-            versions.add(0, new Option("RELEASE", "RELEASE"));
+            versions.add(0, "RELEASE");
         }
 
         // optionally limit the number of versions returned
@@ -117,45 +108,15 @@ public class VersionOptionProvider extends AbstractOptionProvider {
             limit = null;
         }
         if (limit != null && limit > 0 && versions.size() > limit) {
-            versions = new ArrayList<Option>(versions.subList(0, limit));
+            versions = new ArrayList<String>(versions.subList(0, limit));
         }
 
         // optionally include a blank value
         if (Boolean.parseBoolean(form.getFirstValue("optional", null))) {
-            versions.add(0, new Option("", ""));
+            versions.add(0, "");
         }
 
         return versions;
-    }
-
-    /**
-     * @param options
-     * @param value
-     * @return true if the list of options contains an option with the given value
-     */
-    private boolean optionsContainsValue(List<Option> options, String value) {
-        if (options == null) {
-            return false;
-        }
-        for (Option option : options) {
-            if (StringUtils.equals(value, option.getValue())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param artifact
-     * @return String representation of the artifact version
-     */
-    private String buildOptionName(ArtifactInfo artifact) {
-        StringBuilder name = new StringBuilder();
-        name.append(artifact.version);
-        name.append(" (");
-        name.append(DateFormatUtils.ISO_DATETIME_FORMAT.format(artifact.lastModified));
-        name.append(")");
-        return name.toString();
     }
 
 }
